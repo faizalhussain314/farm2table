@@ -1,0 +1,73 @@
+// src/App.tsx
+
+import { Provider } from 'react-redux';
+import store from './store/store';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './ui/pages/Login';
+import Dashboard from './ui/pages/Dashboard';
+import Products from './ui/pages/Products';
+import Categories from './ui/pages/Categories';
+import Orders from './ui/pages/Orders';
+import Customers from './ui/pages/Customers';
+import AddProduct from './ui/pages/AddProduct';
+import AddCustomer from './ui/pages/AddCustomer';
+import ProtectedRoute from './routes/ProtectedRoute';
+import { ThemeProvider } from './context/ThemeContext';
+import Header from './ui/components/Header';
+import { Toaster } from 'react-hot-toast';
+import Sidebar from './ui/components/Sidebar';
+
+function App() {
+  const AuthenticatedLayout = () => (
+    <div className="flex h-screen bg-background-light transition-colors duration-200">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-x-hidden overflow-y-auto  dark:bg-background p-6">
+        <Toaster position="top-right" reverseOrder={false} />
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/add-product" element={<AddProduct />} />
+            <Route path="/add-customer" element={<AddCustomer />} />
+            {/* Fallback route: redirect unknown routes to Dashboard */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
+
+  return (
+    <Provider store={store}>
+      <ThemeProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <AuthenticatedLayout />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/not-authorized"
+              element={
+                <div className="flex items-center justify-center min-h-screen">
+                  <h1>You are not authorized to view this page.</h1>
+                </div>
+              }
+            />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </Provider>
+  );
+}
+
+export default App;
