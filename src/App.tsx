@@ -24,7 +24,7 @@ function App() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto  dark:bg-background p-6">
-        <Toaster position="top-right" reverseOrder={false} />
+        
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/products" element={<Products />} />
@@ -44,6 +44,7 @@ function App() {
   return (
     <Provider store={store}>
       <ThemeProvider>
+      <Toaster position="top-right" reverseOrder={false} />
         <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
