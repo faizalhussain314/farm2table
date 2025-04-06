@@ -18,6 +18,7 @@ import { Toaster } from 'react-hot-toast';
 import Sidebar from './ui/components/Sidebar';
 import Vendors from './ui/pages/Vendors';
 import AddVendor from './ui/pages/AddVendor';
+import Subcategories from './ui/pages/Subcategories';
 
 function App() {
   const AuthenticatedLayout = () => (
@@ -34,6 +35,7 @@ function App() {
             <Route path="/orders" element={<Orders />} />
             <Route path="/customers" element={<Customers />} />
             <Route path='/vendors' element={<Vendors />} />
+            <Route path='/sub-categories' element={<Subcategories />} />
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/add-customer" element={<AddCustomer />} />
             <Route path='/add-vendor' element={<AddVendor />} />

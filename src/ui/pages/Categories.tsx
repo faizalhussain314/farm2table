@@ -1,16 +1,33 @@
-import  { useEffect, useState } from 'react';
-import { Edit, Trash2, Plus } from 'lucide-react';
-import { getCategories, Category } from '../../services/categories/categoryService';
-import AddCategoryModal from '../components/AddCategoryModal';
-
+import { useEffect, useState } from "react";
+import { Edit, Trash2, Plus } from "lucide-react";
+import {
+  getCategories,
+  Category,
+  deleteCategory,
+} from "../../services/categories/categoryService";
+import AddCategoryModal from "../components/AddCategoryModal";
+import EditCategoryModal from "../components/EditCategoryModal";
+import toast from "react-hot-toast";
 
 const BASEURL = import.meta.env.VITE_WEB_URL;
 
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteCategory(id);
+      toast.success("Category deleted");
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete");
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -19,7 +36,7 @@ const Categories = () => {
         setCategories(data || []);
       } catch (err) {
         console.error(err);
-        setError('Failed to load categories.');
+        setError("Failed to load categories.");
         setCategories([]);
       } finally {
         setLoading(false);
@@ -35,8 +52,7 @@ const Categories = () => {
         <h1 className="text-2xl font-semibold">Categories</h1>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-primary hover:bg-primary-dark text-background px-4 py-2 rounded-lg flex items-center space-x-2"
-        >
+          className="bg-primary hover:bg-primary-dark text-background px-4 py-2 rounded-lg flex items-center space-x-2">
           <Plus className="h-5 w-5" />
           <span>Add Category</span>
         </button>
@@ -90,34 +106,45 @@ const Categories = () => {
                   <td className="p-4">{category.name}</td>
                   <td className="p-4">
                     <img
-                     
                       src={`${BASEURL}${category.image}`}
                       alt={category.name}
                       className="h-10 w-10 rounded object-cover"
                     />
                   </td>
-                  <td className="p-4">{category.isActive ? 'Yes' : 'No'}</td>
+                  <td className="p-4">{category.isActive ? "Yes" : "No"}</td>
                   <td className="p-4">
                     <div className="flex space-x-2">
-                      <button className="p-2 hover:bg-background rounded-lg text-primary">
+                      <button
+                        onClick={() => setEditingCategory(category)}
+                        className="p-2 hover:bg-background rounded-lg text-primary">
                         <Edit className="h-5 w-5" />
                       </button>
-                      <button className="p-2 hover:bg-background rounded-lg text-red-500">
+                      <button
+                        onClick={() => handleDelete(category.id)}
+                        className="p-2 hover:bg-background rounded-lg text-red-500">
                         <Trash2 className="h-5 w-5" />
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
+
+            {editingCategory && (
+              <EditCategoryModal
+                category={editingCategory}
+                onClose={() => setEditingCategory(null)}
+                onUpdated={async () => {
+                  setEditingCategory(null);
+                  const updated = await getCategories();
+                  setCategories(updated);
+                }}
+              />
+            )}
           </tbody>
         </table>
       </div>
 
-      {error && (
-        <div className="text-red-500 text-sm mt-4">
-          {error}
-        </div>
-      )}
+      {error && <div className="text-red-500 text-sm mt-4">{error}</div>}
     </div>
   );
 };
