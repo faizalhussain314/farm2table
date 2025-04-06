@@ -49,3 +49,14 @@ export const deleteProduct = async (productId: string): Promise<void> => {
     throw new Error("Failed to delete product.");
   }
 };
+
+export const getProductById = async (id: string): Promise<Product> => {
+  const response = await axiosInstance.get(`/products/${id}`);
+  return response.data;
+};
+
+export const updateProduct = async (id: string, formData: FormData): Promise<void> => {
+  await axiosInstance.put(`/products/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};

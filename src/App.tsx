@@ -19,6 +19,7 @@ import Sidebar from './ui/components/Sidebar';
 import Vendors from './ui/pages/Vendors';
 import AddVendor from './ui/pages/AddVendor';
 import Subcategories from './ui/pages/Subcategories';
+import EditProduct from './ui/pages/edit-product/[id]';
 
 function App() {
   const AuthenticatedLayout = () => (
@@ -39,6 +40,7 @@ function App() {
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/add-customer" element={<AddCustomer />} />
             <Route path='/add-vendor' element={<AddVendor />} />
+            <Route path="/edit-product/:id" element={<EditProduct />} />
 
             {/* Fallback route: redirect unknown routes to Dashboard */}
             <Route path="*" element={<Navigate to="/" replace />} />

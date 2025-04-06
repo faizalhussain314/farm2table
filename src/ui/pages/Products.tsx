@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react';
-import { Edit, Trash2, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { getProducts, deleteProduct, Product } from '../../services/products/productService';
-import toast from 'react-hot-toast'; // Importing react-hot-toast for showing toasts
+import { useEffect, useState } from "react";
+import { Edit, Trash2, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  getProducts,
+  deleteProduct,
+  Product,
+} from "../../services/products/productService";
+import toast from "react-hot-toast"; // Importing react-hot-toast for showing toasts
 
 const BASEURL = import.meta.env.VITE_WEB_URL;
 
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(5);
 
@@ -20,7 +24,7 @@ const Products = () => {
         setProducts(data.results || []);
       } catch (err) {
         console.error(err);
-        setError('Failed to load products.');
+        setError("Failed to load products.");
         setProducts([]);
       } finally {
         setLoading(false);
@@ -33,7 +37,10 @@ const Products = () => {
   // Get current products for the page
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
 
   // Change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -42,19 +49,18 @@ const Products = () => {
   const totalPages = Math.ceil(products.length / productsPerPage);
 
   const handleDelete = async (productId: string) => {
-   
-    const toastId = toast.loading('Deleting product...', {
+    const toastId = toast.loading("Deleting product...", {
       duration: 5000,
     });
 
     try {
-      await deleteProduct(productId); 
-      setProducts(products.filter(product => product.id !== productId));
-      toast.success('Product deleted successfully!', {
-        id: toastId, 
+      await deleteProduct(productId);
+      setProducts(products.filter((product) => product.id !== productId));
+      toast.success("Product deleted successfully!", {
+        id: toastId,
       });
     } catch (error) {
-      toast.error('Failed to delete product. Please try again.', {
+      toast.error("Failed to delete product. Please try again.", {
         id: toastId,
       });
     }
@@ -66,8 +72,7 @@ const Products = () => {
         <h1 className="text-2xl font-semibold">Products</h1>
         <Link
           to="/add-product"
-          className="bg-primary hover:bg-primary-dark text-background px-4 py-2 rounded-lg flex items-center space-x-2"
-        >
+          className="bg-primary hover:bg-primary-dark text-background px-4 py-2 rounded-lg flex items-center space-x-2">
           <Plus className="h-5 w-5" />
           <span>Add Product</span>
         </Link>
@@ -75,7 +80,7 @@ const Products = () => {
 
       <div className="bg-white shadow-sm rounded-lg overflow-hidden">
         <table className="w-full ">
-          <thead >
+          <thead>
             <tr className="border-b border-gray-300 bg-gray-200">
               <th className="text-left p-4">Product</th>
               <th className="text-left p-4">Category</th>
@@ -85,9 +90,11 @@ const Products = () => {
             </tr>
           </thead>
           <tbody>
-            {loading && (
+            {loading &&
               [...Array(5)].map((_, idx) => (
-                <tr key={idx} className="border-b border-gray-300 animate-pulse">
+                <tr
+                  key={idx}
+                  className="border-b border-gray-300 animate-pulse">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <div className="h-10 w-10 bg-gray-300  rounded-lg" />
@@ -110,8 +117,7 @@ const Products = () => {
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
+              ))}
 
             {!loading && products.length === 0 && (
               <tr>
@@ -123,7 +129,9 @@ const Products = () => {
 
             {!loading &&
               currentProducts.map((product) => (
-                <tr key={product.id} className="border-b border-gray-700 transition">
+                <tr
+                  key={product.id}
+                  className="border-b border-gray-700 transition">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <img
@@ -140,7 +148,11 @@ const Products = () => {
                   <td className="p-4">
                     <div className="flex space-x-2">
                       <button className="p-2 hover:bg-background rounded-lg text-primary">
-                        <Edit className="h-5 w-5" />
+                        <Link
+                          to={`/edit-product/${product.id}`}
+                          className="p-2 hover:bg-background rounded-lg text-primary">
+                          <Edit className="h-5 w-5" />
+                        </Link>
                       </button>
                       <button
                         className="p-2 hover:bg-background rounded-lg text-red-500"
@@ -162,8 +174,11 @@ const Products = () => {
           <button
             key={index + 1}
             onClick={() => paginate(index + 1)}
-            className={`px-4 py-2 rounded-lg ${currentPage === index + 1 ? 'bg-primary text-background' : 'bg-gray-300 hover:bg-gray-400'}`}
-          >
+            className={`px-4 py-2 rounded-lg ${
+              currentPage === index + 1
+                ? "bg-primary text-background"
+                : "bg-gray-300 hover:bg-gray-400"
+            }`}>
             {index + 1}
           </button>
         ))}
