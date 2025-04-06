@@ -3,14 +3,18 @@ import axiosInstance from "../../utils/axiosInstance";
 
 
 export interface Customer {
-    id: string;
-    name: string;
-    email: string;
-    phoneNumber: string;
-    role: string;
-    isActive: boolean;
-    avatar?: string; 
-  }
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  role: string;
+  isActive: boolean;
+  avatar?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
   
 
 export interface NewCustomer {

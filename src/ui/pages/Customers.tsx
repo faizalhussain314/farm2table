@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Mail, Phone, Plus } from 'lucide-react';
+import  { useEffect, useState } from 'react';
+import { Mail, Phone, Plus, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getCustomers, Customer } from '../../services/customers/customerService';
+import CustomerDetailsModal from '../components/CustomerDetailsModal';
 
 const Customers = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -20,7 +22,6 @@ const Customers = () => {
         setLoading(false);
       }
     };
-    console.log("cusomers",customers)
     fetchCustomers();
   }, []);
 
@@ -92,20 +93,32 @@ const Customers = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-400">Role</p>
                   <p className="text-lg font-semibold capitalize">{customer.role}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
-                  <p
-                    className={`text-lg font-semibold ${
-                      customer.isActive ? 'text-green-500' : 'text-red-500'
-                    }`}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
+                    <p
+                      className={`text-lg font-semibold ${
+                        customer.isActive ? 'text-green-500' : 'text-red-500'
+                      }`}
+                    >
+                      {customer.isActive ? 'Active' : 'Inactive'}
+                    </p>
+                  </div>
+                  <button
+                    className="text-primary hover:text-primary-dark"
+                    onClick={() => setSelectedCustomer(customer)}
+                    title="View details"
                   >
-                    {customer.isActive ? 'Active' : 'Inactive'}
-                  </p>
+                    <Eye className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             </div>
           ))}
       </div>
+
+      {/* 👇 Modal Component */}
+      <CustomerDetailsModal customer={selectedCustomer} onClose={() => setSelectedCustomer(null)} />
     </div>
   );
 };

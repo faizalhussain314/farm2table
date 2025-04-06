@@ -16,6 +16,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import Header from './ui/components/Header';
 import { Toaster } from 'react-hot-toast';
 import Sidebar from './ui/components/Sidebar';
+import Vendors from './ui/pages/Vendors';
+import AddVendor from './ui/pages/AddVendor';
 
 function App() {
   const AuthenticatedLayout = () => (
@@ -31,8 +33,11 @@ function App() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path='/vendors' element={<Vendors />} />
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/add-customer" element={<AddCustomer />} />
+            <Route path='/add-vendor' element={<AddVendor />} />
+
             {/* Fallback route: redirect unknown routes to Dashboard */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -10,7 +10,8 @@ import {
   Calendar,
   BarChart3,
   History,
-  HelpCircle
+  HelpCircle,
+  User2
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -55,6 +56,17 @@ const Sidebar = () => {
               }>
                 <Package size={20} />
                 <span>Products</span>
+              </NavLink>
+
+              <NavLink to="/vendors" className={({ isActive }) => 
+                `flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-background ${
+                  isActive 
+                    ? 'text-primary bg-gray-100 dark:bg-background' 
+                    : 'text-gray-600 dark:text-gray-300'
+                }`
+              }>
+                <User2 size={20} />
+                <span>Vendors</span>
               </NavLink>
               <NavLink to="/customers" className={({ isActive }) => 
                 `flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-background ${
