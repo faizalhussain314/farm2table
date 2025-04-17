@@ -8,26 +8,26 @@ export interface Subcategory {
   isActive: boolean;
 }
 
-// ✅ 1. Get all subcategories
+
 export const getSubcategories = async (): Promise<Subcategory[]> => {
   const res = await axiosInstance.get('/subcategories');
   return res.data;
 };
 
-// ✅ 2. Get subcategory by ID
+
 export const getSubcategoryById = async (id: string): Promise<Subcategory> => {
   const res = await axiosInstance.get(`/subcategories/${id}`);
   return res.data;
 };
 
-// ✅ 3. Create subcategory
+
 export const addSubcategory = async (formData: FormData): Promise<void> => {
   await axiosInstance.post('/subcategories', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
 };
 
-// ✅ 4. Update subcategory by ID
+
 export const updateSubcategory = async (
   id: string,
   formData: FormData
