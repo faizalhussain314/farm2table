@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, updateProduct } from '../../../services/products/productService';
 import { getCategories, Category } from '../../../services/categories/categoryService';
-import { getSubcategories, Subcategory } from '../../../services/subcategories/subcategoryService';
-import { Upload } from 'lucide-react';
+import { getSubcategories, getSubcategoriesByCategoryName, Subcategory } from '../../../services/subcategories/subcategoryService';
+
 import { toast } from 'react-hot-toast';
+import { Image } from 'lucide-react';
+
+
+
+
 
 const EditProduct = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,15 +27,20 @@ const EditProduct = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [loading, setLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+const inputRef = useRef<HTMLInputElement>(null);
+const [backendImage, setBackendImage] = useState<string | null>(null);
+
+
+  const extractFileName = (url: string) => url.split("/").pop() ?? "image.jpg";
 
   useEffect(() => {
     const fetchFormData = async () => {
       try {
         setLoading(true);
-        const [product, categoriesData, subcategoriesData] = await Promise.all([
+        const [product, categoriesData] = await Promise.all([
           getProductById(id!),
           getCategories(),
-          getSubcategories()
         ]);
 
         setProductName(product.name);
@@ -41,7 +51,13 @@ const EditProduct = () => {
         setUnit(product.unit);
         setDescription(product.description || '');
         setCategories(categoriesData);
+        setPreviewUrl(product.image ? `${product.image}` : null);
+
+        const subcategoriesData = await getSubcategoriesByCategoryName(product.category)
+
+        
         setSubcategories(subcategoriesData);
+
       } catch (error) {
         toast.error('Failed to load product');
       } finally {
@@ -55,7 +71,18 @@ const EditProduct = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setImage(file);
+  
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPreviewUrl(reader.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      // no new file → keep backend image
+      setPreviewUrl(backendImage);
+    }
   };
+  
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +121,7 @@ const EditProduct = () => {
             <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-background rounded-lg px-4 py-2 ring-1 ring-gray-200 focus:ring-2 focus:ring-primary">
               <option value="">Select category</option>
               {categories.map((c) => (
-                <option key={c.id} value={c.name}>{c.name}</option>
+                <option key={c._id} value={c.name}>{c.name}</option>
               ))}
             </select>
 
@@ -102,7 +129,7 @@ const EditProduct = () => {
             <select value={subcategory} onChange={(e) => setSubcategory(e.target.value)} className="w-full bg-background rounded-lg px-4 py-2 ring-1 ring-gray-200 focus:ring-2 focus:ring-primary">
               <option value="">Select subcategory</option>
               {subcategories.map((s) => (
-                <option key={s.id} value={s.name}>{s.name}</option>
+                <option key={s._id} value={s.name}>{s.name}</option>
               ))}
             </select>
 
@@ -124,10 +151,44 @@ const EditProduct = () => {
 
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" className="w-full h-32  bg-background rounded-lg px-4 py-2 ring-1 ring-gray-200 focus:ring-2 focus:ring-primary" />
 
-          <div>
-            <label className="block mb-2">Product Image</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-          </div>
+          {/*──────── Product Image picker ────────*/}
+<div>
+  <label className="block mb-2">Product Image</label>
+
+  {/* hidden real input */}
+  <input
+    type="file"
+    accept="image/*"
+    ref={inputRef}
+    onChange={handleImageChange}
+    className="hidden"
+  />
+
+  {/* visible trigger */}
+  <button
+    type="button"
+    onClick={() => inputRef.current?.click()}
+    className="p-2  border border-gray-300 rounded text-gray-600 flex items-center gap-2"
+  >
+    <span className="flex-1 text-left truncate">
+      {image
+        ? image.name                                   /* newly chosen file */
+        : previewUrl
+        ? extractFileName(previewUrl)                  /* existing API image */
+        : "Choose image…"}
+    </span>
+    <Image />
+  </button>
+
+  {previewUrl && (
+    <img
+      src={previewUrl}
+      alt="Preview"
+      className="mt-2 h-24 w-24 object-cover rounded border"
+    />
+  )}
+</div>
+
 
           <div className="flex justify-end space-x-4">
             <button type="button" onClick={() => navigate('/products')} className="px-6 py-2 rounded-lg border border-gray-700 hover:bg-background">Cancel</button>

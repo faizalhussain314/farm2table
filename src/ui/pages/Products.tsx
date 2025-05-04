@@ -17,6 +17,8 @@ const Products = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(5);
 
+  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -35,18 +37,23 @@ const Products = () => {
   }, []);
 
   // Get current products for the page
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
+  /* paging state */
+const [page, setPage]   = useState(1);
+const [limit, setLimit] = useState(10);          // page‑size selector
+
+/* slice products whenever page or limit changes */
+const start = (page - 1) * limit;
+const end   = start + limit;
+const currentProducts = products.slice(start, end);
+
+const totalPages = Math.ceil(products.length / limit);
+
 
   // Change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
 
   // Calculate total pages
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  // const totalPages = Math.ceil(products.length / productsPerPage);
 
   const handleDelete = async (productId: string) => {
     const toastId = toast.loading("Deleting product...", {
@@ -55,7 +62,7 @@ const Products = () => {
 
     try {
       await deleteProduct(productId);
-      setProducts(products.filter((product) => product.id !== productId));
+      setProducts(products.filter((product) => product._id !== productId));
       toast.success("Product deleted successfully!", {
         id: toastId,
       });
@@ -130,12 +137,12 @@ const Products = () => {
             {!loading &&
               currentProducts.map((product) => (
                 <tr
-                  key={product.id}
+                  key={product._id}
                   className="border-b border-gray-700 transition">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <img
-                        src={`${BASEURL}${product.image}`}
+                        src={`${product.image}`}
                         alt={product.name}
                         className="h-10 w-10 rounded-lg object-cover"
                       />
@@ -149,14 +156,14 @@ const Products = () => {
                     <div className="flex space-x-2">
                       <button className="p-2 hover:bg-background rounded-lg text-primary">
                         <Link
-                          to={`/edit-product/${product.id}`}
+                          to={`/edit-product/${product._id}`}
                           className="p-2 hover:bg-background rounded-lg text-primary">
                           <Edit className="h-5 w-5" />
                         </Link>
                       </button>
                       <button
                         className="p-2 hover:bg-background rounded-lg text-red-500"
-                        onClick={() => handleDelete(product.id)} // Call handleDelete when clicked
+                        onClick={() => handleDelete(product._id)} // Call handleDelete when clicked
                       >
                         <Trash2 className="h-5 w-5" />
                       </button>
@@ -169,19 +176,73 @@ const Products = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center space-x-4 mt-4">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => paginate(index + 1)}
-            className={`px-4 py-2 rounded-lg ${
-              currentPage === index + 1
-                ? "bg-primary text-background"
-                : "bg-gray-300 hover:bg-gray-400"
-            }`}>
-            {index + 1}
-          </button>
+      <div className="">
+       {/* ───── Pager ───── */}
+{totalPages > 1  && (
+  <nav className="flex items-center justify-between mt-4 flex-col sm:flex-row gap-4">
+    {/* page‑size selector */}
+    <div className="flex items-center gap-2 text-sm">
+      <span>Rows:</span>
+      <select
+        value={limit}
+        onChange={(e) => {
+          setLimit(Number(e.target.value));
+          setPage(1);           // reset to first page when size changes
+        }}
+        className="border rounded px-2 py-1 bg-white"
+      >
+        {[10, 20, 50].map((n) => (
+          <option key={n} value={n}>{n}</option>
         ))}
+      </select>
+    </div>
+
+    {/* numbered pager */}
+    <ul className="inline-flex items-center gap-1">
+      {/* prev */}
+      <li>
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className="px-3 py-1 rounded border text-sm disabled:opacity-40"
+        >
+          «
+        </button>
+      </li>
+
+      {/* page numbers (first, last, current ±1) */}
+      {Array.from({ length: totalPages }).map((_, i) => {
+        const n = i + 1;
+        const show = n === 1 || n === totalPages || Math.abs(n - page) <= 1;
+        if (!show) return null;
+        return (
+          <li key={n}>
+            <button
+              onClick={() => setPage(n)}
+              className={`px-3 py-1 rounded border text-sm ${
+                n === page ? "bg-primary text-white" : ""
+              }`}
+            >
+              {n}
+            </button>
+          </li>
+        );
+      })}
+
+      {/* next */}
+      <li>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          className="px-3 py-1 rounded border text-sm disabled:opacity-40"
+        >
+          »
+        </button>
+      </li>
+    </ul>
+  </nav>
+)}
+
       </div>
     </div>
   );

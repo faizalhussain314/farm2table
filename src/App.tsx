@@ -20,6 +20,9 @@ import Vendors from './ui/pages/Vendors';
 import AddVendor from './ui/pages/AddVendor';
 import Subcategories from './ui/pages/Subcategories';
 import EditProduct from './ui/pages/edit-product/[id]';
+import EditOrders from './ui/pages/edit-order/[id]';
+import CustomerPage from './ui/pages/CustomerPage';
+import ReportPage from './ui/pages/ReportPage';
 
 function App() {
   const AuthenticatedLayout = () => (
@@ -41,6 +44,9 @@ function App() {
             <Route path="/add-customer" element={<AddCustomer />} />
             <Route path='/add-vendor' element={<AddVendor />} />
             <Route path="/edit-product/:id" element={<EditProduct />} />
+            <Route path="/edit-order/:id" element={<EditOrders />} />
+            <Route path="/customers/:customerId" element={<CustomerPage />} />
+            <Route path="/reports" element={<ReportPage />} />
 
             {/* Fallback route: redirect unknown routes to Dashboard */}
             <Route path="*" element={<Navigate to="/" replace />} />

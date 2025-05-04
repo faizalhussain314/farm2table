@@ -15,12 +15,12 @@ export interface Vendor {
 }
 
 export const getVendors = async (): Promise<Vendor[]> => {
-  const response = await axiosInstance.get('/api/vendors');
+  const response = await axiosInstance.get('/vendor');
   return response.data;
 };
 
 export const addVendor = async (formData: FormData) => {
-  await axiosInstance.post('/api/vendors', formData, {
+  await axiosInstance.post('/vendor', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 };

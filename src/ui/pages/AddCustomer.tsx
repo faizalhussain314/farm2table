@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addCustomer } from "../../services/customers/customerService";
 import toast from "react-hot-toast";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";// Adjust the path if needed
 import "leaflet/dist/leaflet.css";
-import { DraggableMarker } from "../components/DraggableMarker";
+import MapPicker from "../components/MapPicker";
+import VendorSearchSelect, { Vendor } from "../components/VendorSearchSelect";
 
 const AddCustomer = () => {
   const navigate = useNavigate();
@@ -12,13 +12,16 @@ const AddCustomer = () => {
     name: "",
     phone: "",
     password: "",
-    email: "", // Optional but included here
+    email: "", 
+
   });
   const [location, setLocation] = useState<{ lat: number; lng: number }>({
     lat: 25.276987,
     lng: 55.296249,
   });
   const [address, setAddress] = useState("");
+  const [landMark , setLandMark] = useState("");
+  const [vendor, setVendor] = useState<Vendor | null>(null); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +33,10 @@ const AddCustomer = () => {
       password: customer.password,
       role: 'customer' as const,
       address,
+      landMark,
       latitude: location.lat,
       longitude: location.lng,
+      vendorId: vendor?.id,
     };
     
 
@@ -58,11 +63,12 @@ const AddCustomer = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Full Name
+              Full Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={customer.name}
+              aria-required
               onChange={(e) =>
                 setCustomer({ ...customer, name: e.target.value })
               }
@@ -73,7 +79,7 @@ const AddCustomer = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Email (optional)
+              Email <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -81,6 +87,7 @@ const AddCustomer = () => {
               onChange={(e) =>
                 setCustomer({ ...customer, email: e.target.value })
               }
+              aria-required
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary bg-white dark:bg-background"
               placeholder="user@example.com"
             />
@@ -88,7 +95,7 @@ const AddCustomer = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Phone Number
+              Phone Number <span className="text-red-500">*</span>
             </label>
             <input
               type="tel"
@@ -96,6 +103,7 @@ const AddCustomer = () => {
               onChange={(e) =>
                 setCustomer({ ...customer, phone: e.target.value })
               }
+              aria-required
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary bg-white dark:bg-background"
               required
             />
@@ -103,7 +111,7 @@ const AddCustomer = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
+              Password <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
@@ -111,40 +119,64 @@ const AddCustomer = () => {
               onChange={(e) =>
                 setCustomer({ ...customer, password: e.target.value })
               }
+              aria-required
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary bg-white dark:bg-background"
               required
             />
           </div>
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Vendor <span className="text-red-500">*</span>
+            </label>
+            <VendorSearchSelect onSelect={setVendor} />
+            {vendor && (
+              <p className="mt-1 text-sm text-gray-600">Selected: {vendor.name}</p>
+            )}
+          </div>
+          <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Address
+              Postal Address<span className="text-red-500">*</span>
             </label>
             <textarea
               value={address}
               onChange={(e) => setAddress(e.target.value)}
+              aria-required
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary bg-white dark:bg-background h-24"
               placeholder="Enter full address"
             />
           </div>
+
+         
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+           Land Mark<span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={landMark}
+              onChange={(e) =>
+                setLandMark( e.target.value)
+              }
+              aria-required
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary bg-white dark:bg-background"
+              required
+            />
+          </div>
+          
 
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-2">
               Drag Marker to Set Location
             </label>
             <div className="h-64 w-full rounded-lg overflow-hidden">
-              <MapContainer
-                center={location}
-                zoom={13}
-                style={{ height: "100%", width: "100%" }}>
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution="&copy; OpenStreetMap contributors"
-                />
-                <DraggableMarker
-                  position={location}
-                  onPositionChange={setLocation}
-                />
-              </MapContainer>
+            <MapPicker value={location} onChange={setLocation} />
+                       {location && (
+                         <p className="mt-1 text-sm text-gray-600">
+                           Lat: {location.lat.toFixed(6)}  Lng:{" "}
+                           {location.lng.toFixed(6)}
+                         </p>
+                       )}
             </div>
             <p className="text-sm text-gray-500 mt-2">
               Selected: Latitude {location.lat.toFixed(4)}, Longitude{" "}

@@ -1,7 +1,7 @@
 import axiosInstance from '../../utils/axiosInstance';
 
 export interface Category {
-  id: string;
+  _id: string;
   name: string;
   image: string;
   isActive: boolean;

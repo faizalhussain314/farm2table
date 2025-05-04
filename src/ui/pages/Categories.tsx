@@ -9,7 +9,6 @@ import AddCategoryModal from "../components/AddCategoryModal";
 import EditCategoryModal from "../components/EditCategoryModal";
 import toast from "react-hot-toast";
 
-const BASEURL = import.meta.env.VITE_WEB_URL;
 
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -17,12 +16,25 @@ const Categories = () => {
   const [error, setError] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  /* paging */
+const [page, setPage]   = useState(1);
+const [limit, setLimit] = useState(10);          // rows per page selector
+
+/* slice the categories list for the current page */
+const start = (page - 1) * limit;
+const end   = start + limit;
+const currentCats = categories.slice(start, end);
+
+const totalPages = Math.ceil(categories.length / limit);
+
+useEffect(() => setPage(1), [categories]);
+
 
   const handleDelete = async (id: string) => {
     try {
       await deleteCategory(id);
       toast.success("Category deleted");
-      setCategories((prev) => prev.filter((c) => c.id !== id));
+      setCategories((prev) => prev.filter((c) => c._id !== id));
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete");
@@ -101,12 +113,12 @@ const Categories = () => {
             )}
 
             {!loading &&
-              categories.map((category) => (
-                <tr key={category.id} className="border-b border-gray-700">
+              currentCats.map((category) => (
+                <tr key={category._id} className="border-b border-gray-700">
                   <td className="p-4">{category.name}</td>
                   <td className="p-4">
                     <img
-                      src={`${BASEURL}${category.image}`}
+                      src={`${category.image}`}
                       alt={category.name}
                       className="h-10 w-10 rounded object-cover"
                     />
@@ -120,7 +132,7 @@ const Categories = () => {
                         <Edit className="h-5 w-5" />
                       </button>
                       <button
-                        onClick={() => handleDelete(category.id)}
+                        onClick={() => handleDelete(category._id)}
                         className="p-2 hover:bg-background rounded-lg text-red-500">
                         <Trash2 className="h-5 w-5" />
                       </button>
@@ -142,8 +154,74 @@ const Categories = () => {
             )}
           </tbody>
         </table>
-      </div>
+        {/*── Pager — hidden when only one page ──*/}
 
+
+      </div>
+      {totalPages > 1 && (
+  <nav className="flex items-center justify-between mt-4 flex-col sm:flex-row gap-4">
+    {/* rows selector */}
+    <div className="flex items-center gap-2 text-sm bg-white">
+      <span>Rows:</span>
+      <select
+        value={limit}
+        onChange={(e) => {
+          setLimit(Number(e.target.value));
+          setPage(1);              // reset when page‑size changes
+        }}
+        className="border rounded px-2 py-1 bg-white"
+      >
+        {[10, 20, 50].map((n) => (
+          <option key={n} value={n}>{n}</option>
+        ))}
+      </select>
+    </div>
+
+    {/* page numbers */}
+    <ul className="inline-flex items-center gap-1">
+      {/* prev */}
+      <li>
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className="px-3 py-1 rounded border text-sm disabled:opacity-40"
+        >
+          «
+        </button>
+      </li>
+
+      {/* first, current±1, last */}
+      {Array.from({ length: totalPages }).map((_, i) => {
+        const n = i + 1;
+        const visible = n === 1 || n === totalPages || Math.abs(n - page) <= 1;
+        if (!visible) return null;
+        return (
+          <li key={n}>
+            <button
+              onClick={() => setPage(n)}
+              className={`px-3 py-1 rounded border text-sm ${
+                n === page ? "bg-primary text-white" : ""
+              }`}
+            >
+              {n}
+            </button>
+          </li>
+        );
+      })}
+
+      {/* next */}
+      <li>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          className="px-3 py-1 rounded border text-sm disabled:opacity-40"
+        >
+          »
+        </button>
+      </li>
+    </ul>
+  </nav>
+)}
       {error && <div className="text-red-500 text-sm mt-4">{error}</div>}
     </div>
   );

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Image, X } from "lucide-react";
 import toast from "react-hot-toast";
 import {
   updateCategory,
@@ -12,18 +12,21 @@ interface Props {
   onUpdated: () => void;
 }
 
-const BASEURL = import.meta.env.VITE_WEB_URL;
-
 const EditCategoryModal = ({ onClose, category, onUpdated }: Props) => {
   const [name, setName] = useState(category.name);
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    `${BASEURL}${category.image}`
+    `${category.image}`
   );
+  const [fileLabel, setFileLabel] = useState(`${category.image}`);
   const [submitting, setSubmitting] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const extractFileName = (url: string) => url.split("/").pop() ?? "image.jpg";
 
   const handleImageChange = (file: File | null) => {
     setImage(file);
+    setFileLabel(file ? file.name : "No file chosen");
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -31,7 +34,7 @@ const EditCategoryModal = ({ onClose, category, onUpdated }: Props) => {
       };
       reader.readAsDataURL(file);
     } else {
-      setPreviewUrl(`${BASEURL}${category.image}`);
+      setPreviewUrl(`${category.image}`);
     }
   };
 
@@ -45,7 +48,7 @@ const EditCategoryModal = ({ onClose, category, onUpdated }: Props) => {
 
     try {
       setSubmitting(true);
-      await updateCategory(category.id, formData);
+      await updateCategory(category._id, formData);
       toast.success("Category updated successfully");
       onClose();
       onUpdated();
@@ -78,14 +81,35 @@ const EditCategoryModal = ({ onClose, category, onUpdated }: Props) => {
             />
           </div>
 
+          {/* ───────── Image picker block (replace old <div> that held the file input) ───────── */}
           <div>
-            <label className="block text-sm mb-1">Image (optional)</label>
+            <label className="block text-sm mb-1">Image </label>
+
+            {/* hidden file input */}
             <input
               type="file"
               accept="image/*"
               onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
-              className="block w-full text-sm"
+              ref={inputRef} // need a ref
+              className="hidden"
             />
+
+            {/* visible trigger */}
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="p-2 w-52 border border-gray-300 dark:border-gray-600 rounded text-gray-600 flex items-center gap-2">
+              <span className="flex-1 text-left truncate">
+                {image
+                  ? image.name // new file chosen
+                  : previewUrl
+                  ? extractFileName(previewUrl) // existing backend image
+                  : "Choose image…"}
+              </span>
+              <Image />
+            </button>
+
+            {/* preview */}
             {previewUrl && (
               <img
                 src={previewUrl}

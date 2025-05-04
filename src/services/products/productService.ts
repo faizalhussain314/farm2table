@@ -2,7 +2,7 @@ import axios from 'axios';
 import axiosInstance from '../../utils/axiosInstance';
 
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
   category: string;
   price: number;
@@ -19,6 +19,23 @@ interface ProductResponse {
   totalPages: number;
   totalResults: number;
 }
+
+type IndividualProduct = {
+  _id: string;
+  name: string;
+  category: string;
+  subcategory: string;
+  price: number;
+  unit: string;
+  stock: number;
+  active: boolean;
+  image: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  __v: number;
+  description: string;
+  quickPicks: boolean;
+};
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -50,7 +67,7 @@ export const deleteProduct = async (productId: string): Promise<void> => {
   }
 };
 
-export const getProductById = async (id: string): Promise<Product> => {
+export const getProductById = async (id: string): Promise<IndividualProduct> => {
   const response = await axiosInstance.get(`/products/${id}`);
   return response.data;
 };

@@ -110,7 +110,7 @@ const AddProduct = () => {
               >
                 <option value="">Select category</option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.name}>
+                  <option key={cat._id} value={cat.name}>
                     {cat.name}
                   </option>
                 ))}
@@ -128,7 +128,7 @@ const AddProduct = () => {
               >
                 <option value="">Select subcategory</option>
                 {subcategories.map((sub) => (
-                  <option key={sub.id} value={sub.name}>
+                  <option key={sub._id} value={sub.name}>
                     {sub.name}
                   </option>
                 ))}

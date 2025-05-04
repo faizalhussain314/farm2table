@@ -10,6 +10,21 @@ const Customers = () => {
   const [error, setError] = useState<string>('');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
 
+  /* paging */
+const [page, setPage]   = useState(1);
+const [limit, setLimit] = useState(10);          // cards per page selector
+
+/* derive the slice to render */
+const start = (page - 1) * limit;
+const end   = start + limit;
+const currentCustomers = customers.slice(start, end);
+
+const totalPages = Math.ceil(customers.length / limit);
+
+/* when list changes (e.g., after add), reset to page 1 if needed */
+useEffect(() => setPage(1), [customers]);
+
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -61,7 +76,7 @@ const Customers = () => {
         )}
 
         {!loading &&
-          customers.map((customer) => (
+          currentCustomers.map((customer) => (
             <div key={customer.id} className="bg-white dark:bg-secondary rounded-lg p-6">
               <div className="flex items-center space-x-4">
                 <img
@@ -91,11 +106,11 @@ const Customers = () => {
               <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Role</p>
-                  <p className="text-lg font-semibold capitalize">{customer.role}</p>
+                  <p className="text-lg font-semibold capitalize">vendorname-id</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Vendor</p>
                     <p
                       className={`text-lg font-semibold ${
                         customer.isActive ? 'text-green-500' : 'text-red-500'
@@ -116,6 +131,71 @@ const Customers = () => {
             </div>
           ))}
       </div>
+{/*── Pager (hidden if only one page) ──*/}
+{totalPages > 1 && (
+  <nav className="flex items-center justify-between mt-6 flex-col sm:flex-row gap-4">
+    {/* rows selector */}
+    <div className="flex items-center gap-2 text-sm">
+      <span>Rows:</span>
+      <select
+        value={limit}
+        onChange={(e) => {
+          setLimit(Number(e.target.value));
+          setPage(1);                   // reset to first when size changes
+        }}
+        className="border rounded px-2 py-1 bg-white"
+      >
+        {[10, 20, 50].map((n) => (
+          <option key={n} value={n}>{n}</option>
+        ))}
+      </select>
+    </div>
+
+    {/* numbered pager */}
+    <ul className="inline-flex items-center gap-1">
+      {/* prev */}
+      <li>
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className="px-3 py-1 rounded border text-sm disabled:opacity-40"
+        >
+          «
+        </button>
+      </li>
+
+      {/* first, current±1, last */}
+      {Array.from({ length: totalPages }).map((_, i) => {
+        const n = i + 1;
+        const show = n === 1 || n === totalPages || Math.abs(n - page) <= 1;
+        if (!show) return null;
+        return (
+          <li key={n}>
+            <button
+              onClick={() => setPage(n)}
+              className={`px-3 py-1 rounded border text-sm ${
+                n === page ? "bg-primary text-white" : ""
+              }`}
+            >
+              {n}
+            </button>
+          </li>
+        );
+      })}
+
+      {/* next */}
+      <li>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          className="px-3 py-1 rounded border text-sm disabled:opacity-40"
+        >
+          »
+        </button>
+      </li>
+    </ul>
+  </nav>
+)}
 
       {/* 👇 Modal Component */}
       <CustomerDetailsModal customer={selectedCustomer} onClose={() => setSelectedCustomer(null)} />
