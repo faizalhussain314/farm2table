@@ -6,6 +6,7 @@ import { getSubcategories, getSubcategoriesByCategoryName, Subcategory } from '.
 
 import { toast } from 'react-hot-toast';
 import { Image } from 'lucide-react';
+import ToggleSwitch from '../../components/ToggleSwitch';
 
 
 
@@ -30,6 +31,7 @@ const EditProduct = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 const inputRef = useRef<HTMLInputElement>(null);
 const [backendImage, setBackendImage] = useState<string | null>(null);
+const [isQuickPicks,setIsQuickPicks] = useState(false);
 
 
   const extractFileName = (url: string) => url.split("/").pop() ?? "image.jpg";
@@ -52,6 +54,7 @@ const [backendImage, setBackendImage] = useState<string | null>(null);
         setDescription(product.description || '');
         setCategories(categoriesData);
         setPreviewUrl(product.image ? `${product.image}` : null);
+        setIsQuickPicks(product.quickPicks)
 
         const subcategoriesData = await getSubcategoriesByCategoryName(product.category)
 
@@ -86,27 +89,28 @@ const [backendImage, setBackendImage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append('name', productName);
-    formData.append('category', category);
-    formData.append('subcategory', subcategory);
-    formData.append('unit', unit);
-    formData.append('price', price.toString());
-    formData.append('stock', stock.toString());
-    formData.append('description', description);
-    if (image) formData.append('image', image);
-
+  
+    const payload = {
+      name:          productName,
+      category,
+      subcategory,
+      unit,
+      price,
+      stock,
+      description,
+      quickPicks:    isQuickPicks,   // keep it as boolean
+    };
+  
     const toastId = toast.loading('Updating product...');
-
     try {
-      await updateProduct(id!, formData);
+      await updateProduct(id!, payload);          // backend expects JSON
       toast.success('Product updated!', { id: toastId });
       navigate('/products');
     } catch (err) {
       toast.error('Failed to update product', { id: toastId });
     }
   };
+  
 
   return (
     <div className="space-y-6">
@@ -150,6 +154,9 @@ const [backendImage, setBackendImage] = useState<string | null>(null);
           </div>
 
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" className="w-full h-32  bg-background rounded-lg px-4 py-2 ring-1 ring-gray-200 focus:ring-2 focus:ring-primary" />
+
+          <ToggleSwitch   isChecked={isQuickPicks}
+                        onChange={() => setIsQuickPicks((prev => (!prev)))}  />
 
           {/*──────── Product Image picker ────────*/}
 <div>

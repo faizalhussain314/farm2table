@@ -9,7 +9,8 @@ export interface Product {
   unit: string;
   stock: number;
   active: boolean;
-  image:string
+  image:string;
+  quickPicks: boolean
 }
 
 interface ProductResponse {
@@ -36,6 +37,18 @@ type IndividualProduct = {
   description: string;
   quickPicks: boolean;
 };
+export type ProductPayload = {
+  name: string;
+  category: string;
+  subcategory: string;
+  unit: string;
+  price: number;
+  stock: number;
+  description: string;
+  quickPicks: boolean;
+};
+
+type Updatable = ProductPayload | Partial<ProductPayload> | FormData;
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -72,8 +85,17 @@ export const getProductById = async (id: string): Promise<IndividualProduct> => 
   return response.data;
 };
 
-export const updateProduct = async (id: string, formData: FormData): Promise<void> => {
-  await axiosInstance.put(`/products/${id}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+export const updateProduct = async (
+  id: string,
+  data: Updatable
+): Promise<void> => {
+  const url = `/products/${id}`;
+
+  if (data instanceof FormData) {
+    await axiosInstance.put(url, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  } else {
+    await axiosInstance.put(url, data);          // Axios → application/json
+  }
 };
