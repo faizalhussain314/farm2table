@@ -12,6 +12,7 @@ import {
   History,
   HelpCircle,
   User2,
+  UserCog,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -135,6 +136,18 @@ const Sidebar = () => {
                 }>
                 <BarChart3 size={20} />
                 <span>Reports</span>
+              </NavLink>
+              <NavLink
+                to="/requests"
+                className={({ isActive }) =>
+                  `flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-background ${
+                    isActive
+                      ? "text-primary bg-gray-100 dark:bg-background"
+                      : "text-gray-600 dark:text-gray-300"
+                  }`
+                }>
+                <UserCog  size={20} />
+                <span>User Request</span>
               </NavLink>
             </nav>
           </div>
