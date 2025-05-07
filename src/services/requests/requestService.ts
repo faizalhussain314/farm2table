@@ -3,7 +3,7 @@
 export interface Request {
     _id: string;
     userName: string;
-    requestType: "Address Change" | "Phone Number Change" | "New Registration" | "Other";
+    requestType: string;
     details: string;
     status: "Pending" | "Approved" | "Rejected" | "In Progress";
     requestedDate: string; // ISO date string
@@ -13,101 +13,115 @@ export interface Request {
   const dummyRequests: Request[] = [
     {
       _id: "req101",
-      userName: "Alice Wonderland",
-      requestType: "Address Change",
-      details: "Moving to 123 Main St, Anytown, AT 12345. Previous: 456 Old Rd.",
+      userName: "Arun Kumar",
+      requestType: "change address",
+      details:
+        "Old address: 12, Gandhi Nagar, Madurai ‑ 625001. New address: 45, M.G. Road, Coimbatore ‑ 641001.",
       status: "Pending",
       requestedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
       _id: "req102",
-      userName: "Bob The Builder",
-      requestType: "Phone Number Change",
-      details: "New number: 555-0102. Old number: 555-0001.",
+      userName: "Bhavani R",
+      requestType: "mobile number",
+      details:
+        "Old mobile: +91 90030 11111. New mobile: +91 89030 22222.",
       status: "Approved",
       requestedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
       _id: "req103",
-      userName: "Charlie Brown",
-      requestType: "New Registration",
-      details: "Wants to join the platform. Email: charlie@example.com",
+      userName: "Chitra Subramanian",
+      requestType: "change address and mobile number",
+      details:
+        "Old address: 18, North Street, Tiruchirappalli ‑ 620018. New address: 7, Anna Salai, Chennai ‑ 600002. Old mobile: +91 94444 33333. New mobile: +91 98400 44444.",
       status: "In Progress",
       requestedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
       _id: "req104",
-      userName: "Diana Prince",
-      requestType: "Address Change",
-      details: "Current address on file is outdated. New: 789 Amazon Way.",
+      userName: "Dhinesh K",
+      requestType: "change address",
+      details:
+        "Old address: 6/27, Rajaji Street, Salem ‑ 636004. New address: 99, Kamarajar Road, Erode ‑ 638003.",
       status: "Rejected",
       requestedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
       _id: "req105",
-      userName: "Edward Scissorhands",
-      requestType: "Other",
-      details: "Requesting an update to profile picture due to policy violation.",
+      userName: "Eshwaran P",
+      requestType: "mobile number",
+      details:
+        "Old mobile: +91 88700 55555. New mobile: +91 95000 66666.",
       status: "Pending",
       requestedDate: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
     },
     {
       _id: "req106",
-      userName: "Fiona Gallagher",
-      requestType: "New Registration",
-      details: "Applying for a new account. Referred by Bob.",
+      userName: "Fathima Begum",
+      requestType: "change address and mobile number",
+      details:
+        "Old address: 33, Beach Road, Thoothukudi ‑ 628001. New address: 12, V.O.C. Street, Tirunelveli ‑ 627002. Old mobile: +91 81220 77777. New mobile: +91 81220 88888.",
       status: "Pending",
       requestedDate: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
     },
     {
       _id: "req107",
-      userName: "George Jetson",
-      requestType: "Phone Number Change",
-      details: "Lost old phone, new number is 555-7890.",
+      userName: "Govindaraj",
+      requestType: "mobile number",
+      details:
+        "Old mobile: +91 90900 12345. New mobile: +91 90900 67890.",
       status: "Approved",
       requestedDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
       _id: "req108",
-      userName: "Hannah Montana",
-      requestType: "Address Change",
-      details: "Updating P.O. Box to a street address.",
+      userName: "Harini S",
+      requestType: "change address",
+      details:
+        "Old address: 57, Lake View Road, Vellore ‑ 632004. New address: 21, Thillai Nagar, Cuddalore ‑ 607003.",
       status: "In Progress",
       requestedDate: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
     },
     {
       _id: "req109",
-      userName: "Tony Stark",
-      requestType: "Other",
-      details: "Requesting API access for a new project.",
+      userName: "Ilango",
+      requestType: "change address and mobile number",
+      details:
+        "Old address: 14, College Road, Nagercoil ‑ 629001. New address: 30, Ooty Main Road, Kotagiri ‑ 643217. Old mobile: +91 94420 99999. New mobile: +91 94420 00000.",
       status: "Pending",
       requestedDate: new Date().toISOString(),
     },
     {
       _id: "req110",
-      userName: "Bruce Wayne",
-      requestType: "New Registration",
-      details: "Registering a new corporate account.",
+      userName: "Jayakumar",
+      requestType: "mobile number",
+      details:
+        "Old mobile: +91 98840 11111. New mobile: +91 98840 22222.",
       status: "Approved",
       requestedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     },
-     {
+    {
       _id: "req111",
-      userName: "Clark Kent",
-      requestType: "Address Change",
-      details: "Moving from Smallville to Metropolis.",
+      userName: "Karthikeyan",
+      requestType: "change address",
+      details:
+        "Old address: 120, Mela Street, Kanchipuram ‑ 631501. New address: 8/2, M.G. Nagar, Puducherry ‑ 605001.",
       status: "Pending",
-      requestedDate: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
+      requestedDate: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
     },
     {
       _id: "req112",
-      userName: "Peter Parker",
-      requestType: "Phone Number Change",
-      details: "Aunt May broke my phone. New number is 555-BUGG.",
+      userName: "Lakshmi Priya",
+      requestType: "change address and mobile number",
+      details:
+        "Old address: 73, Market Lane, Dindigul ‑ 624001. New address: 5, Park Town, Chennai ‑ 600003. Old mobile: +91 96260 33333. New mobile: +91 96260 44444.",
       status: "Pending",
-      requestedDate: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+      requestedDate: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     },
   ];
+  
+  
   
   export const getRequests = (): Promise<Request[]> => {
     console.log("Fetching requests from dummy service...");

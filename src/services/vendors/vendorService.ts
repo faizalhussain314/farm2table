@@ -40,6 +40,8 @@ export const getVendors = async (): Promise<Vendor[]> => {
   return response.data;
 };
 
-export const addVendor = async (formData: VendorPayload) => {
-  await axiosInstance.post('/vendor', formData,);
+export const addVendor = async (formData: FormData) => {
+  await axiosInstance.post('/vendor', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }} );
 };
+

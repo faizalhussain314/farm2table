@@ -23,71 +23,49 @@ const AddVendor = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!document) {
       toast.error('Please upload government ID or proof.');
       return;
     }
-
-    if (!location) return toast.error("Please choose a location on the map.") ;
-
-    // const formData = new FormData();
-    // formData.append('name', vendor.name);
-    // formData.append('email', vendor.email);
-    // formData.append('phoneNumber', vendor.phone);
-    // formData.append('password', vendor.password);
-    // formData.append('address', address);
-    // formData.append('govtId', document);
-    // formData.append('vendorCode',vendor.vendorId) ;
-    // formData.append('serviceLocations',vendor.serviceLocations);
-    // formData.append("latitude", String(location?.lat));
-    // formData.append("longitude", String(location?.lng));
-    
-
-    const toBase64 = (file: File): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = (error) => reject(error);
-      });
-    };
-  
-    let base64File;
-    try {
-      base64File = await toBase64(document);
-    } catch (err) {
-      toast.error('Failed to read document file');
+    if (!location) {
+      toast.error('Please choose a location on the map.');
       return;
     }
 
-    console.log("file",document)
-
-    const payload = {
-      "name": vendor.name,
-      "email": vendor.email,
-      "phoneNumber": vendor.phone,
-      "password": vendor.password,
-      "govtId": base64File,
-      "address":address,
-      "longitude":String(location?.lng),
-      "latitude":String(location?.lat),
-      "vendorCode": vendor.vendorId,
-      "serviceLocations": [vendor.serviceLocations]
     
+    
+  
+    /* ---------- build multipart body ---------- */
+    const formData = new FormData();
+    formData.append('name',           vendor.name);
+    formData.append('email',          vendor.email);
+    formData.append('phoneNumber',    vendor.phone);
+    formData.append('password',       vendor.password);
+    formData.append('address',        address);
+    formData.append('vendorCode',     vendor.vendorId);
+    formData.append('serviceLocations', vendor.serviceLocations); // or loop/JSON‑stringify
+    formData.append('latitude',  String(location.lat));
+    formData.append('longitude', String(location.lng));
+    formData.append('govtId',    document);           // <‑‑ the file blob itself
+  
+    const toastId = toast.loading('Adding vendor…');
+
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
     }
-
-    const toastId = toast.loading('Adding vendor...');
-
+    
+  
     try {
-      await addVendor(payload);
+      await addVendor(formData);     // <- send FormData, not JSON
       toast.success('Vendor added successfully!', { id: toastId });
       navigate('/vendors');
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       toast.error('Failed to add vendor', { id: toastId });
     }
   };
+  
 
   return (
     <div className="space-y-6">

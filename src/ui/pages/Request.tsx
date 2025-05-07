@@ -10,6 +10,7 @@ import {
   // updateRequestService,
 } from "../../services/requests/requestService"; // Adjusted path
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 // --- Mock Modals (as placeholders, implement them fully as needed) ---
 interface AddRequestModalProps {
@@ -258,7 +259,7 @@ const RequestsPage = () => {
             {!loading &&
               currentRequests.map((request) => (
                 <tr key={request._id} className="border-b border-gray-700 hover:bg-gray-50">
-                  <td className="p-4 align-top">{request.userName}</td>
+                  <td className="p-4 align-top"><Link to={"/customers/dummy-customer-1"}><p className="underline">{request.userName}</p></Link></td>
                   <td className="p-4 align-top">{request.requestType}</td>
                   <td className="p-4 align-top text-sm text-gray-600 max-w-xs truncate" title={request.details}>
                     {request.details.length > 60 ? `${request.details.substring(0, 60)}...` : request.details}
@@ -283,12 +284,12 @@ const RequestsPage = () => {
                         className="p-2 hover:bg-gray-200 rounded-lg text-blue-600">
                         <Edit className="h-5 w-5" />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => handleDelete(request._id)}
                         title="Delete Request"
                         className="p-2 hover:bg-gray-200 rounded-lg text-red-500">
                         <Trash2 className="h-5 w-5" />
-                      </button>
+                      </button> */}
                        {/* Optional: View Details Button */}
                        {/* <button
                         title="View Full Details"

@@ -23,6 +23,7 @@ import EditOrders from './ui/pages/edit-order/[id]';
 import CustomerPage from './ui/pages/CustomerPage';
 import ReportPage from './ui/pages/ReportPage';
 import Requests from './ui/pages/Request';
+import SignupRequestsPage from './ui/pages/SignupRequestsPage';
 
 function App() {
   const AuthenticatedLayout = () => (
@@ -48,6 +49,7 @@ function App() {
             <Route path="/customers/:customerId" element={<CustomerPage />} />
             <Route path="/reports" element={<ReportPage />} />
             <Route path='/requests' element={<Requests />} />
+            <Route path='/sign-up-request' element={<SignupRequestsPage />} />
 
             {/* Fallback route: redirect unknown routes to Dashboard */}
             <Route path="*" element={<Navigate to="/" replace />} />

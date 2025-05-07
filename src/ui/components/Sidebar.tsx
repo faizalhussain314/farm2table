@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -13,9 +13,14 @@ import {
   HelpCircle,
   User2,
   UserCog,
+  UserPlus,
+  FilePenLine,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 const Sidebar = () => {
+  const [openRequests, setOpenRequests] = useState(false);
   return (
     <div className="w-64 bg-white  text-gray-900 dark:text-gray-100 transition-colors duration-200">
       <div className="p-4">
@@ -137,22 +142,73 @@ const Sidebar = () => {
                 <BarChart3 size={20} />
                 <span>Reports</span>
               </NavLink>
-              <NavLink
-                to="/requests"
-                className={({ isActive }) =>
-                  `flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-background ${
-                    isActive
-                      ? "text-primary bg-gray-100 dark:bg-background"
-                      : "text-gray-600 dark:text-gray-300"
-                  }`
-                }>
-                <UserCog  size={20} />
-                <span>User Request</span>
-              </NavLink>
+              <button
+              onClick={() => setOpenRequests(!openRequests)}
+              className={`w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-background ${
+                openRequests
+                  ? "text-primary bg-gray-100 dark:bg-background"
+                  : "text-gray-600 dark:text-gray-300"
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <UserCog size={20} />
+                <span>User Requests</span>
+              </div>
+              {openRequests ? (
+                <ChevronDown size={18} className="shrink-0" />
+              ) : (
+                <ChevronRight size={18} className="shrink-0" />
+              )}
+            </button>
+              {openRequests && (
+              <div className="pl-6 space-y-2 ">
+                <NavLink
+                  to="/sign-up-request"
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-background ${
+                      isActive
+                        ? "text-primary bg-gray-100 dark:bg-background"
+                        : "text-gray-600 dark:text-gray-300"
+                    }`
+                  }
+                >
+                  <UserPlus size={18} />
+                  <span>Signup Requests</span>
+                </NavLink>
+
+                <NavLink
+                  to="/requests/"
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-background ${
+                      isActive
+                        ? "text-primary bg-gray-100 dark:bg-background"
+                        : "text-gray-600 dark:text-gray-300"
+                    }`
+                  }
+                >
+                  <FilePenLine size={18} />
+                  <span>Change Requests</span>
+                </NavLink>
+
+                <NavLink
+                  to="/requests/complaints"
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-background ${
+                      isActive
+                        ? "text-primary bg-gray-100 dark:bg-background"
+                        : "text-gray-600 dark:text-gray-300"
+                    }`
+                  }
+                >
+                  <MessageSquare size={18} />
+                  <span>Complaints</span>
+                </NavLink>
+              </div>
+            )}
             </nav>
           </div>
 
-          <div>
+          {/* <div>
             <p className="text-xs uppercase text-gray-500 dark:text-gray-400 mb-4">
               Support
             </p>
@@ -182,7 +238,7 @@ const Sidebar = () => {
                 <span>Help & Support</span>
               </NavLink>
             </nav>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

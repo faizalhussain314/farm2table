@@ -42,3 +42,24 @@
     @apply bg-gradient-to-r from-brand-500 to-primary-light bg-clip-text text-transparent;
   }
 }
+
+
+  /* For custom scrollbar in the modal body if needed */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent; /* Track background */
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #9ca3af; /* Scrollbar thumb color (gray-400) */
+    border-radius: 3px; /* Rounded corners for the thumb */
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #6b7280; /* Scrollbar thumb color on hover (gray-500) */
+  }
+  /* For Firefox */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #9ca3af transparent; /* thumb and track color */
+  }
