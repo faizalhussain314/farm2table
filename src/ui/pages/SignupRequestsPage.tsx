@@ -139,9 +139,9 @@ const SignupRequestsPage = () => {
     const { type, requestName } = actionToConfirm;
     modalMessage = (
       <span>
-        Are you sure you want to {type === 'sendToVendor' ? 'send details to vendor' : type} for signup request: <br />
-        <strong className="font-semibold">{requestName}</strong>?
-        {type === 'sendToVendor' && <p className="text-xs sm:text-sm mt-2 text-gray-500 dark:text-gray-400">This action is typically performed for already approved requests.</p>}
+         {type === 'sendToVendor' ? 'Assign vendor to Verify this for signup request:' : "Confirm the user to create account on our platform"}  <br />
+        {/* <strong className="font-semibold">{requestName}</strong>? */}
+        {/* {type === 'sendToVendor' && <p className="text-xs sm:text-sm mt-2 text-gray-500 dark:text-gray-400">This action is typically performed for already approved requests.</p>} */}
       </span>
     );
 
@@ -156,7 +156,7 @@ const SignupRequestsPage = () => {
     } else if (type === 'sendToVendor') {
       modalTitle = "Confirm Send to Vendor";
       modalConfirmText = "Send to Vendor";
-      modalButtonVariant = 'primary'; // Or 'warning' if you prefer
+      modalButtonVariant = 'primary'; 
     }
   }
 

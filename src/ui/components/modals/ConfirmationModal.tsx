@@ -1,5 +1,6 @@
 // src/components/Modals/ConfirmationModal.tsx
-import React from 'react';
+import React, { useState } from 'react';
+import VendorSearchSelect, { Vendor } from '../VendorSearchSelect';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -45,12 +46,20 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       break;
   }
 
+    const [vendor, setVendor] = useState<Vendor | null>(null); 
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center p-4 z-[100] transition-opacity duration-150 ease-linear" aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <div className="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-lg shadow-xl w-full max-w-md transform transition-all duration-150 ease-out scale-100">
         <h3 id="modal-title" className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">{title}</h3>
         <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4 sm:mb-6">
           {message}
+
+          <p>{title === "Confirm Send to Vendor" && 
+            
+            <VendorSearchSelect onSelect={setVendor} className='mt-4' />
+            
+            }</p>
         </div>
         <div className="flex flex-col sm:flex-row sm:justify-end sm:space-x-3 space-y-2 sm:space-y-0">
           <button
