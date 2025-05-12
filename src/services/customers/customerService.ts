@@ -39,8 +39,8 @@ export interface NewCustomer {
 
 
 export const getCustomers = async (): Promise<Customer[]> => {
-    const response = await axiosInstance.get<Customer[]>('/customers');
-    return response.data;
+    const response = await axiosInstance.get('/customers');
+    return response.data.results;
   };
   
 
