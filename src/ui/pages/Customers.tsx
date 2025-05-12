@@ -119,13 +119,17 @@ useEffect(() => setPage(1), [customers]);
                       {customer.isActive ? 'Active' : 'Inactive'}
                     </p>
                   </div>
+                  <Link to={"/customers/dummy-customer-1"}>
                   <button
                     className="text-primary hover:text-primary-dark"
-                    onClick={() => setSelectedCustomer(customer)}
+                    // onClick={() => setSelectedCustomer(customer)}
                     title="View details"
                   >
+
                     <Eye className="w-5 h-5" />
+                   
                   </button>
+                  </Link>
                 </div>
               </div>
             </div>
