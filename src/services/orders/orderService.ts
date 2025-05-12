@@ -54,9 +54,9 @@ export interface Order {
   // Add other relevant properties
 }
 
-export const getOrders = async (): Promise<OrderResponse[]> => {
-  const response = await axiosInstance.get<OrderResponse[]>('/orders');
-  return response.data;
+export const getOrders = async (): Promise<DetailedOrder[]> => {
+  const response = await axiosInstance.get('/orders');
+  return response.data.results;
 };
 
 export const updateOrderStatusApi = async (

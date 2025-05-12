@@ -24,6 +24,7 @@ import CustomerPage from './ui/pages/CustomerPage';
 import ReportPage from './ui/pages/ReportPage';
 import Requests from './ui/pages/Request';
 import SignupRequestsPage from './ui/pages/SignupRequestsPage';
+import VendorPage from './ui/pages/VendorPage';
 
 function App() {
   const AuthenticatedLayout = () => (
@@ -50,7 +51,7 @@ function App() {
             <Route path="/reports" element={<ReportPage />} />
             <Route path='/requests' element={<Requests />} />
             <Route path='/sign-up-request' element={<SignupRequestsPage />} />
-
+            <Route path="/vendors/:vendorId" element={<VendorPage />} />
             {/* Fallback route: redirect unknown routes to Dashboard */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

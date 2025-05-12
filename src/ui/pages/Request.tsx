@@ -201,12 +201,12 @@ const RequestsPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">User Requests</h1>
-        <button
+        {/* <button
           onClick={() => setShowAddModal(true)}
           className="bg-primary hover:bg-primary-dark text-background px-4 py-2 rounded-lg flex items-center space-x-2">
           <Plus className="h-5 w-5" />
           <span>Log New Request</span>
-        </button>
+        </button> */}
       </div>
 
       {showAddModal && <AddRequestModal onClose={() => setShowAddModal(false)} onAdded={handleRequestAdded} />}

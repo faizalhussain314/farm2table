@@ -72,24 +72,28 @@ const [totalPages, setTotalPages] = useState(1);
     const fetchOrders = async () => {
       try {
         setLoading(true);
-  
-        const data = await getOrders();      // no page/limit params
+    
+        const data = await getOrders();  // API call to get the orders
         const detailed = data as unknown as DetailedOrder[];
   
+        if (!detailed || detailed.length === 0) {
+          setError("No orders found");
+          return;
+        }
+  
         const simplified: SimplifiedOrder[] = detailed.map((o) => ({
-          id: o._id,
+          id: o.orderId,
           customer: o.customer?.name ?? "Unknown",
-          product: o.items.map((it) => it.productId?.name).join(", "),
+          product: (o.items && o.items.length > 0) ? o.items.map((it) => it.productId?.name).join(", ") : "No products",
           date: new Date(o.createdAt).toLocaleDateString(),
           total: o.totalPrice,
           status: o.status[0].toUpperCase() + o.status.slice(1),
         }));
-  
+        
         setAllOrders(simplified);
   
-        // initialise paging
         setTotalPages(Math.ceil(simplified.length / limit));
-        setPage(1);                                 // start on first page
+        setPage(1);
       } catch (err) {
         console.error(err);
         setError("Failed to fetch orders.");
@@ -99,7 +103,8 @@ const [totalPages, setTotalPages] = useState(1);
     };
   
     fetchOrders();
-  }, []);             // ← fetch only once
+  }, []);
+              // ← fetch only once
 
   useEffect(() => {
     const start = (page - 1) * limit;

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Mail, Phone, Plus, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getVendors, Vendor } from '../../services/vendors/vendorService';
+import { getVendors, Vendor, VendorResponse } from '../../services/vendors/vendorService';
 
 const Vendors = () => {
-  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [vendors, setVendors] = useState<VendorResponse[]>([]);
   const [loading, setLoading] = useState(true);
  /* paging */
 const [page, setPage]   = useState(1);
@@ -25,6 +25,7 @@ useEffect(() => setPage(1), [vendors]);
     const fetchVendors = async () => {
       try {
         const data = await getVendors();
+        console.log("data",data)
         setVendors(data || []);
       } catch (err) {
         console.error('Failed to load vendors', err);
@@ -63,34 +64,33 @@ useEffect(() => setPage(1), [vendors]);
             </div>
           ))}
 
-        {!loading && vendors.length === 0 && (
+        {loading  && (
           <div className="text-center text-gray-500 col-span-full">No vendors found.</div>
         )}
 
-        {!loading &&
+        {!loading && currentVendors.length > 0 &&
           currentVendors.map((vendor) => (
-            <div key={vendor.id} className="bg-white dark:bg-secondary rounded-lg p-6">
+            <div key={vendor._id} className="bg-white dark:bg-secondary rounded-lg p-6">
               <div className="flex items-center space-x-4">
                 <img
                   src={
-                    vendor.avatar ||
                     'https://ui-avatars.com/api/?name=' +
-                      encodeURIComponent(vendor.name) +
+                      encodeURIComponent(vendor.user.name) +
                       '&background=random'
                   }
-                  alt={vendor.name}
+                  alt={vendor.user.name}
                   className="h-16 w-16 rounded-full object-cover"
                 />
                 <div>
-                  <h3 className="text-lg font-semibold">{vendor.name}</h3>
+                  <h3 className="text-lg font-semibold">{vendor.user.name}</h3>
                   <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400 mt-1">
                     <div className="flex items-center">
                       <Mail className="h-4 w-4 mr-1" />
-                      {vendor.email}
+                      {vendor.user.email}
                     </div>
                     <div className="flex items-center">
                       <Phone className="h-4 w-4 mr-1" />
-                      {vendor.phoneNumber}
+                      {vendor.user.phoneNumber}
                     </div>
                   </div>
                 </div>
@@ -98,12 +98,12 @@ useEffect(() => setPage(1), [vendors]);
               <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Role</p>
-                  <p className="text-lg font-semibold capitalize">{vendor.role}</p>
+                  <p className="text-lg font-semibold capitalize">{vendor.user.role}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
-                  <p className={`text-lg font-semibold ${vendor.isActive ? 'text-green-500' : 'text-red-500'}`}>
-                    {vendor.isActive ? 'Active' : 'Inactive'}
+                  <p className={`text-lg font-semibold ${vendor.status ? 'text-green-500' : 'text-red-500'}`}>
+                    {vendor.status ? 'Active' : 'Inactive'}
                   </p>
                 </div>
               </div>
