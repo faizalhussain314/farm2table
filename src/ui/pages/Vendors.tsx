@@ -82,7 +82,7 @@ useEffect(() => setPage(1), [vendors]);
                   className="h-16 w-16 rounded-full object-cover"
                 />
                 <div>
-                  <h3 className="text-lg font-semibold">{vendor.user.name}</h3>
+                  <Link to={"/vendors/vendor123"}> <h3 className="text-lg font-semibold underline">{vendor.user.name}</h3></Link>
                   <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400 mt-1">
                     <div className="flex items-center">
                       <Mail className="h-4 w-4 mr-1" />
