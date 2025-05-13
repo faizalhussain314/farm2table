@@ -38,7 +38,10 @@ interface DetailedOrder {
   customer: Customer;
   items: Item[];
   totalPrice: number;
+  orderId:string;
   status: string;
+  order_id:string;
+  date:string;
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -51,6 +54,7 @@ interface SimplifiedOrder {
   date: string;
   total: number;
   status: string;
+  orderId:string;
 }
 
 const Orders = () => {
@@ -82,11 +86,12 @@ const [totalPages, setTotalPages] = useState(1);
         }
   
         const simplified: SimplifiedOrder[] = detailed.map((o) => ({
-          id: o.orderId,
+          id: o._id,
           customer: o.customer?.name ?? "Unknown",
           product: (o.items && o.items.length > 0) ? o.items.map((it) => it.productId?.name).join(", ") : "No products",
-          date: new Date(o.createdAt).toLocaleDateString(),
+          date: o.date,
           total: o.totalPrice,
+          orderId:o.orderId,
           status: o.status[0].toUpperCase() + o.status.slice(1),
         }));
         
@@ -197,7 +202,7 @@ const [totalPages, setTotalPages] = useState(1);
             ) : (
               orders.map((order) => (
                 <tr key={order.id} className="border-b border-gray-700">
-                  <td className="p-4 underline cursor-pointer" onClick={()=>handleOrderClick(order.id)}>{order.id}</td>
+                  <td className="p-4 underline cursor-pointer" onClick={()=>handleOrderClick(order.id)}>{order.orderId}</td>
                   <td className="p-4">{order.customer}</td>
                   {/* <td className="p-4">{order.product}</td> */}
                   <td className="p-4">{order.date}</td>
@@ -211,7 +216,7 @@ const [totalPages, setTotalPages] = useState(1);
                     </span>
                   </td>
                   <td className="p-4">
-                  ₹{order.total.toFixed(2)}
+                  ₹{order.total/1000}
                   </td>
                 </tr>
               ))

@@ -21,7 +21,7 @@ export interface SubcategoryDetail {
 
 export const getSubcategories = async (): Promise<Subcategory[]> => {
   const res = await axiosInstance.get('/subcategories');
-  return res.data;
+  return res.data.results;
 };
 
 
