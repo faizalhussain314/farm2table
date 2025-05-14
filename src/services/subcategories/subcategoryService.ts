@@ -20,30 +20,27 @@ export interface SubcategoryDetail {
 }
 
 export const getSubcategories = async (): Promise<Subcategory[]> => {
-  const res = await axiosInstance.get('/subcategories');
+  const res = await axiosInstance.get("/subcategories");
   return res.data.results;
 };
-
 
 export const getSubcategoryById = async (id: string): Promise<Subcategory> => {
   const res = await axiosInstance.get(`/subcategories/${id}`);
   return res.data;
 };
 
-
 export const addSubcategory = async (formData: FormData): Promise<void> => {
-  await axiosInstance.post('/subcategories', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+  await axiosInstance.post("/subcategories", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
-
 
 export const updateSubcategory = async (
   id: string,
   formData: FormData
 ): Promise<void> => {
   await axiosInstance.patch(`/subcategories/${id}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
@@ -60,16 +57,24 @@ export const changeSubcategoryStatus = async (
   await axiosInstance.patch(`/subcategories/${id}/status`, { isActive });
 };
 
-export const getSubcategoriesByCategoryName = async (categoryName: string): Promise<SubcategoryDetail[]> => {
+export const getSubcategoriesByCategoryName = async (
+  categoryName: string
+): Promise<SubcategoryDetail[]> => {
   try {
-    
-      const response = await axiosInstance.get<SubcategoryDetail[]>(`/subcategories`, {
-          params: { category: categoryName }
-      });
-      return response.data;
+    const response = await axiosInstance.get(`/subcategories`, {
+      params: { category: categoryName },
+    });
+    return response.data.results;
   } catch (error) {
-      console.error(`Error fetching subcategories for category "${categoryName}":`, error);
-      
-      throw new Error(`Failed to fetch subcategories: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error(
+      `Error fetching subcategories for category "${categoryName}":`,
+      error
+    );
+
+    throw new Error(
+      `Failed to fetch subcategories: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
   }
 };
